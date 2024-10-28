@@ -1,0 +1,27 @@
+PROGRAMIRANJE 1:
+
+!!!!!Velja nauk iz UVP: uporabljaj vgrajene funkcije!!!!!
+
+Uvod v funkcijsko programiranje:
+	- ukaz 'let' začne definicijo tipa: enačaj po prvem nizu da spremenljivko, str str = xyz pa poda funkcijo.
+	- !!! imamo standardno knjižnjico z moduli: String, List ter Random, ki imajo vgrajene funkcije !!!
+	- imamo if ... than .... else ....
+	- imamo znake tip char npr. 'a' ter druga drugi inverzni funkciji code in chr, ki pretvori znak v ASCII kodo in obratno.
+	- vse v OCamlu ima svoj tip; funkcije so tipa tip_arg -> tip_rez-
+	- če funkciji, ki sprejme dva argumenta podamo le enega, dobimo funkcijo enega argumenta, kjer je prvi input že fiksiran.
+	- anonimne funkcije delujejo na princip: fun arg -> thing
+	- elemente seznamov ločujemo s ; , seznami so homogeni
+	- elemente naborov ločujemo s , ; nabori so heterogeni
+	- glavna ideja naborov so funkcije z večimi rezultati
+	- Za discardanje component uporabimo '_'. Primer: let (_,c) = (a,b), sledi c = b.
+	- če ne znamo narediti dobro definirane funkcije uporabimo metodo option.
+	- funkcije verižimo (komponiramo) s komando '|>', primer: g(f(x)) je x |> f |> g [alternativa je g @@ f @@ x]
+	- če hočemo funkcijo (alikak širši tip) definirati rekurzivno moramo namesto 'let ....' napisati 'let rec ....'.
+
+
+
+OCaml vaje:
+
+1)
+	-map2 je tipa (a -> b -> c) -> 'a list -> b' list -> 'c list . sprejme funkcijo dveh spremenljivk ter dva seznama enake dolžine ter aplicira funkcijo na istoležne elemente, ter shrani vrednost na istoležni element novega seznama tipa 'c list.
+	-fold_left sprejme funkcijo, začeno vrednost ter seznam. Funkcijo dveh spremenljivk uporabi na prvem element seznama ter začetni vrednosti, ter dobi novo začetno vrednost, ki je argument v novi iteraciji skupaj z drugim elementom seznama. Na koncu vrne 'začetno vrednost'.
