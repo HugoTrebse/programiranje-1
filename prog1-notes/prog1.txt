@@ -21,7 +21,13 @@ Uvod v funkcijsko programiranje:
 
 
 OCaml vaje:
+	-map2 je tipa (a -> b -> c) -> 'a list -> b' list -> 'c list . sprejme funkcijo dveh spremenljivk ter dva seznama 
+		enake dolžine ter aplicira funkcijo na istoležne elemente, ter shrani vrednost na istoležni element novega seznama tipa 'c list.
+	-fold_left sprejme funkcijo, začeno vrednost ter seznam. Funkcijo dveh spremenljivk uporabi na prvem element seznama
+		ter začetni vrednosti, ter dobi novo začetno vrednost, ki je argument v novi iteraciji skupaj z drugim elementom seznama. Na koncu vrne 'začetno vrednost'.
 
-1)
-	-map2 je tipa (a -> b -> c) -> 'a list -> b' list -> 'c list . sprejme funkcijo dveh spremenljivk ter dva seznama enake dolžine ter aplicira funkcijo na istoležne elemente, ter shrani vrednost na istoležni element novega seznama tipa 'c list.
-	-fold_left sprejme funkcijo, začeno vrednost ter seznam. Funkcijo dveh spremenljivk uporabi na prvem element seznama ter začetni vrednosti, ter dobi novo začetno vrednost, ki je argument v novi iteraciji skupaj z drugim elementom seznama. Na koncu vrne 'začetno vrednost'.
+
+
+Rekurzija:
+	- Zank praviloma ne uporabljamo, marveč vgrajene funkcije; primer: List.map ter List.fold_left
+	-  
