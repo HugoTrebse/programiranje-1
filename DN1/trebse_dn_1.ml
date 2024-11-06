@@ -771,8 +771,8 @@ let odsifriraj sifrirano =
   let besede = String.split_on_char ' ' sifrirano in
   let zacetni_kljuc = String.make 26 '_' in
   match probaj_desifrirati besede zacetni_kljuc with
-  | Some kljuc -> String.concat " " (List.map (sifriraj kljuc) besede)
-  | None -> failwith "Ključ ne obstaja"
+  | Some kljuc -> Some (String.concat " " (List.map (sifriraj kljuc) besede))
+  | None -> None
 
 
 let primer_5_16 = sifriraj quick_brown_fox "THIS IS A VERY HARD PROBLEM"
