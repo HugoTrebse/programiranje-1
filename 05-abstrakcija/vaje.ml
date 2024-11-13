@@ -20,6 +20,10 @@ module type NAT = sig
 
   val eq  : t -> t -> bool
   val zero : t
+
+  val to_int: t -> int
+
+  val of_int: int -> t
   (* Dodajte manjkajoče! *)
   (* val to_int : t -> int *)
   (* val of_int : int -> t *)
@@ -36,10 +40,12 @@ end
 module Nat_int : NAT = struct
 
   type t = int
-  let eq x y = failwith "later"
+  let eq x y = if x=y then true else false
   let zero = 0
-  (* Dodajte manjkajoče! *)
 
+  let to_int n = n
+
+  let of_int n = n
 end
 
 (*----------------------------------------------------------------------------*
@@ -52,11 +58,27 @@ end
 [*----------------------------------------------------------------------------*)
 
 module Nat_peano : NAT = struct
+  type t =
+    | Zero
+    | Succ of t
+  let zero = Zero
+  let enka = Succ Zero
+  let rec eq x y = 
+    match x,y with
+    | Zero, Zero -> true
+    | Succ _, Zero -> false
+    | Zero, Succ _ -> false
+    | Succ x', Succ y' -> eq x' y'
 
-  type t = unit (* To morate spremeniti! *)
-  let eq x y = failwith "later"
-  let zero = () (* To morate spremeniti! *)
-  (* Dodajte manjkajoče! *)
+  let rec of_int n = 
+    match n with
+    |0 -> zero
+    |_ -> Succ (of_int (n - 1))
+
+  let rec to_int n = 
+    match n with
+    |Zero -> 0
+    |Succ t -> (to_int t) + 1
 
 end
 
@@ -79,8 +101,8 @@ end
 let sum_nat_100 = 
   (* let module Nat = Nat_int in *)
   let module Nat = Nat_peano in
-  Nat.zero (* to popravite na ustrezen izračun *)
-  (* |> Nat.to_int *)
+    let n = Nat.of_int 100 in
+      Nat.to_int n * (Nat.to_int n + 1) / 2
 (* val sum_nat_100 : int = 5050 *)
 
 (*----------------------------------------------------------------------------*
@@ -135,7 +157,21 @@ let sum_nat_100 =
 module type COMPLEX = sig
   type t
   val eq : t -> t -> bool
-  (* Dodajte manjkajoče! *)
+
+  val nicla : t
+
+  val enka : t
+
+  val imaginarna_enka : t
+
+  val negacija: t -> t
+
+  val konjugiranje: t -> t
+
+  val ( +++ ): t -> t -> t
+
+  val ( *** ): t -> t ->
+
 end
 
 (*----------------------------------------------------------------------------*
@@ -147,7 +183,23 @@ module Cartesian : COMPLEX = struct
 
   type t = {re : float; im : float}
 
-  let eq x y = failwith "later"
+  let eq x y = if x.re = y.re then if x.im = y.im then true else false else false
+
+  let nicla = {re: 0.; im: 0.}
+
+  let enka = {re: 1.; im: 0.}
+
+  let imaginarna_enka = {re: 0.; im: 1.}
+
+  let negacija x = {re: (-1) *. x.re; im: (-1) *. x.im}
+
+  let konjugiranje x = {re: x.re ; im: (-1) *. x.im}
+
+  let ( +++ ) x y = {re: x.re +. y.re ; im: y.im +. x.im}
+
+  let ( *** ) x y = {re: x.re *. y.re -. x.im *. y.im ; im: x.re *. y.im +. y.re *. x.im}
+
+
   (* Dodajte manjkajoče! *)
 
 end
@@ -168,7 +220,21 @@ module Polar : COMPLEX = struct
   let rad_of_deg deg = (deg /. 180.) *. pi
   let deg_of_rad rad = (rad /. pi) *. 180.
 
-  let eq x y = failwith "later"
+  let eq x y = if x.mag = y.mag then x.arg = y.arg else false else false
+
+  let nicla = {magn: 0.; arg: 0.}
+
+  let enka = {magn: 1.; arg; 0.}
+
+  let imaginarna_enka = {magn: 1.; arg: rad_of_deg 90}
+
+  let konjugiranje x = {magn: x.magn; arg: (-1)*. x.arg}
+
+  let negacija x = {magn: x.magn; arg: pi - x.arg}
+
+  let ( *** ) x y = {magn: x.magn *. y.magn; arg: x.arg + y.arg}
+
+  let ( +++ ) = failwith "Later!"
   (* Dodajte manjkajoče! *)
 
 end
