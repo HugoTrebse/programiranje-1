@@ -41,7 +41,7 @@
 
 type register = A | B | C | D
 
-let primer_tipi_1 = [[A; B; B; A]; [A; C; D; C]]
+(* let primer_tipi_1 = [[A; B; B; A]; [A; C; D; C]] *)
 (* val primer_tipi_1 : register list list = [[A; B; B; A]; [A; C; D; C]] *)
 
 (*----------------------------------------------------------------------------*
@@ -59,7 +59,7 @@ type expression =
   | Register of register
   | Const of int
 
-let primer_tipi_2 = [Register B; Const 42]
+(* let primer_tipi_2 = [Register B; Const 42] *)
 (* val primer_tipi_2 : expression list = [Register B; Const 42] *)
 
 (*----------------------------------------------------------------------------*
@@ -75,7 +75,7 @@ let primer_tipi_2 = [Register B; Const 42]
 
 type address = Address of int
 
-let primer_tipi_3 = (42, Address 42)
+(* let primer_tipi_3 = (42, Address 42) *)
 (* val primer_tipi_3 : int * address = (42, Address 42) *)
 
 (*----------------------------------------------------------------------------*
@@ -145,7 +145,7 @@ type instruction =
   | POP of register
   | HLT
 
-let primer_tipi_4 = [ MOV (A, Register B); MOV (C, Const 42); JA (Address 10); HLT ]
+(* let primer_tipi_4 = [ MOV (A, Register B); MOV (C, Const 42); JA (Address 10); HLT ] *)
 (* val primer_tipi_4 : instruction list =
   [MOV (A, Register B); MOV (C, Const 42); JA (Address 10); HLT] *)
 
@@ -211,7 +211,6 @@ let primer_tipi_5 = fibonacci 10
    MOV (B, Register A); DEC C; MOV (A, Register C); CALL (Address 1);
    ADD (A, Register B); JMP (Address 17); POP B; POP C; RET;
    MOV (A, Const 10); CALL (Address 1); HLT] *)
-
 
 (*----------------------------------------------------------------------------*
  ### Pomnilnik
@@ -287,10 +286,7 @@ let empty = {
  ukazov in vrne začetno stanje računalnika, v katerem so vsi registri in
  zastavice nastavljeni na nič, sklad pa je prazen. Pri tem si lahko za pretvorbo
  seznama v tabelo pomagate z uporabo funkcije `Array.of_list`.
-[*-----------------------------------------------------u----------------------*)
-
-(*Treba je preimenovati instruction list v IndstructionList ker funkcije in levostičnost*)
-
+[*----------------------------------------------------------------------------*)
 
 let init (seznam_navodil : instruction list) = {empty with instructions = Array.of_list(seznam_navodil)}
 
@@ -322,9 +318,7 @@ let primer_tipi_7 = init [ MOV (A, Register B); MOV (C, Const 42); JA (Address 1
 
 let read_instruction (stanje : state) = 
   match stanje.ip with
-    | Address ip -> (match Array.length stanje.instructions > ip with
-      | true -> Some stanje.instructions.(ip)
-      | false -> None)
+    | Address ip -> if (Array.length stanje.instructions > ip) then Some stanje.instructions.(ip) else None
 
 let primer_izvajanje_1 =
   [
@@ -340,8 +334,6 @@ let primer_izvajanje_1 =
  registra v danem stanju.
 [*----------------------------------------------------------------------------*)
 
-(* let read_register (stanje : state) (register : register) = stanje.(lowercase_ascii register) (*Ne bo šlo ker so problemi s tipi - register ni char ampak custom tip*) *)
-
 let read_register (stanje : state) (register : register) = 
   match register with
   | A -> stanje.a
@@ -349,11 +341,12 @@ let read_register (stanje : state) (register : register) =
   | C -> stanje.c
   | D -> stanje.d
 
-let primer_izvajanje_2 = read_register { empty with a = 10; b = 42 } B
+let primer_izvajanje_2 =
+  read_register { empty with a = 10; b = 42 } B
 (* val primer_izvajanje_2 : int = 42 *)
 
 (*----------------------------------------------------------------------------*
- Napišite funkcijo `read_expression : state -> expression -> int`, ki vrne 
+ Napišite funkcijo `read_expression : state -> expression -> int`, ki vrne
  celoštevilsko vrednost izraza v danem stanju.
 [*----------------------------------------------------------------------------*)
 
@@ -361,12 +354,13 @@ let read_expression (stanje : state) (izraz : expression) =
   match izraz with
   | Register x -> read_register stanje x
   | Const y -> y
-  
-let primer_izvajanje_3 = read_expression { empty with a = 10; b = 20 } (Register B)
+
+let primer_izvajanje_3 =
+  read_expression { empty with a = 10; b = 20 } (Register B)
 (* val primer_izvajanje_3 : int = 20 *)
 
-(* let primer_izvajanje_4 =
-  read_expression { empty with a = 10; b = 20 } (Const 42) *)
+let primer_izvajanje_4 =
+  read_expression { empty with a = 10; b = 20 } (Const 42)
 (* val primer_izvajanje_4 : int = 42 *)
 
 (*----------------------------------------------------------------------------*
@@ -386,7 +380,6 @@ let write_register (stanje : state) (register : register) (stevilka : int) =
   | C -> {stanje with c = stevilka}
   | D -> {stanje with d = stevilka}
 
-
 let primer_izvajanje_5 =
   write_register { empty with c = 42 } D 24
 (* val primer_izvajanje_5 : state =
@@ -399,12 +392,12 @@ let primer_izvajanje_5 =
  s spremenjenim registrom.
 [*----------------------------------------------------------------------------*)
 
-let perform_unop (funct: int -> int) (stanje : state) (register : register) = match register with
+let perform_unop (funct: int -> int) (stanje : state) (register : register) = 
+  match register with
   | A -> {stanje with a = funct (stanje.a)}
   | B -> {stanje with b = funct (stanje.b)}
   | C -> {stanje with c = funct (stanje.c)}
   | D -> {stanje with d = funct (stanje.d)}
-
 
 let primer_izvajanje_6 =
   perform_unop (fun x -> 101 * x) { empty with c = 5 } C
@@ -426,7 +419,6 @@ let perform_binop (dvoclena : int -> int -> int) (stanje : state) (register : re
   | C -> {stanje with c = dvoclena stanje.c delni}
   | D -> {stanje with d = dvoclena stanje.d delni}
 
-
 let primer_izvajanje_7 =
   perform_binop ( * ) { empty with c = 5 } C (Const 101)
 (* val primer_izvajanje_7 : state =
@@ -442,9 +434,8 @@ let primer_izvajanje_7 =
  povečan za 1, saj v našem primeru vsi ukazi zasedejo enako prostora).
 [*----------------------------------------------------------------------------*)
 
-(* let next = fun Address n -> Address (n+1) ne deluje, ker ne moramo manually povečat "argumenta" Address*)
 let next = function
-  | Address x -> Address (x+1)
+  | Address x -> Address (x + 1)
 
 let primer_izvajanje_8 =
   next (Address 41)
@@ -456,9 +447,8 @@ let primer_izvajanje_8 =
  naslednji ukaz.
 [*----------------------------------------------------------------------------*)
 
-let jump (stanje : state) = function
-  | Address x -> {stanje with ip = Address x}
-let proceed (stanje: state) = {stanje with ip = next stanje.ip}
+let jump (stanje : state) (naslov : address) = {stanje with ip = naslov}
+let proceed (stanje: state) = {stanje with ip = next (stanje.ip)}
 
 let primer_izvajanje_9 =
   jump { empty with ip = Address 42} (Address 10)
@@ -482,12 +472,13 @@ let primer_izvajanje_10 =
 let push_stack (stanje : state) (stevilka : int) = {stanje with stack = stevilka :: stanje.stack}
 let pop_stack (stanje : state) =
   match stanje.stack with
-  | [] -> failwith "Sklad je prazen"
+  | [] -> failwith "Sklad je prazen."
   | prvi :: ostali -> (prvi, {stanje with stack = ostali})
 
-let primer_izvajanje_10 =
+let primer_izvajanje_10_cela_pet =
   push_stack { empty with stack = [1; 2; 3] } 42
-(* val primer_izvajanje_10 : state =
+
+(* val primer_izvajanje_10_cela_pet : state =
   {instructions = [||]; a = 0; b = 0; c = 0; d = 0; ip = Address 0;
    zero = false; carry = false; stack = [42; 1; 2; 3]} *)
 
@@ -523,10 +514,10 @@ let primer_izvajanje_12 =
  funkcija skoči na naslednji ukaz.
 [*----------------------------------------------------------------------------*)
 
+(*Navodilo ni pravilno.*)
+
 let conditional_jump (stanje : state) (naslov : address) (pogoj : bool) = 
-  match pogoj with 
-  | true -> jump stanje naslov
-  | false -> proceed stanje
+  if pogoj then jump stanje naslov else proceed stanje
 
 let primer_izvajanje_13 =
   conditional_jump { empty with ip = Address 42 } (Address 10) true
@@ -565,8 +556,8 @@ let primer_izvajanje_15 =
 [*----------------------------------------------------------------------------*)
 
 let return stanje = 
-  match (pop_stack stanje) with
-  | (vrhnji, stanje_z_ostalimi) -> jump stanje_z_ostalimi (Address vrhnji)
+  let popped = pop_stack stanje in
+  jump (snd popped) (Address (fst popped))
 
 let primer_izvajanje_16 =
   return { empty with ip = (Address 100); stack = [42; 43; 44] }
@@ -594,7 +585,6 @@ let run_instruction st = function
   | DEC reg -> perform_unop pred st reg |> proceed
   | MUL exp -> perform_binop ( * ) st A exp |> proceed
   | DIV exp -> perform_binop ( / ) st A exp |> proceed
-  (* Pozor, OCaml land/lor/lxor interpretira kot simbole, zato jih pišemo infiksno! *)
   | AND (reg, exp) -> perform_binop ( land ) st reg exp |> proceed
   | OR (reg, exp) -> perform_binop ( lor ) st reg exp |> proceed
   | XOR (reg, exp) -> perform_binop ( lxor ) st reg exp |> proceed
@@ -614,9 +604,6 @@ let run_instruction st = function
       let n, st' = pop_stack st in
       write_register st' reg n |> proceed
   | HLT -> failwith "Cannot execute instruction"
-(* val run_instruction : state -> instruction -> state = <fun> *)
-
-(* let run_instruction _ _ = () *)
 
 (*----------------------------------------------------------------------------*
  Napišite funkcijo `run_program : state -> state`, ki izvaja ukaze v danem
@@ -628,13 +615,14 @@ let rec run_program (stanje : state) =
   match read_instruction stanje with
   | None -> stanje
   | Some HLT -> stanje
-  | Some navodilo -> run_instruction stanje navodilo |> run_program 
-let primer_izvajanje_16 =
+  | Some navodilo -> run_program (run_instruction stanje navodilo)
+
+let primer_izvajanje_16_cela_pet =
   fibonacci 10
   |> init
   |> run_program
   
-  (* val primer_izvajanje_16 : state =
+  (* val primer_izvajanje_16_cela_pet : state =
   {instructions =
     [|JMP (Address 20); PUSH (Register C); PUSH (Register B);
       MOV (C, Register A); CMP (A, Const 0); JE (Address 17);
@@ -669,7 +657,7 @@ let parse_register = function
   | "B" -> B
   | "C" -> C
   | "D" -> D
-  | _ -> failwith "Niz ne predstavlja registra"
+  | _ -> failwith "Niz ne predstavlja registra."
 
 let primer_branje_1 = parse_register "A"
 (* val primer_branje_1 : register = A *)
@@ -741,12 +729,19 @@ let clean_lines str_list = List.filter (fun niz -> niz <> "") (List.map clean_li
  podan direktno s številom ali pa z eno izmed oznak v seznamu.
 [*----------------------------------------------------------------------------*)
 
-let parse_address (velik_seznam) niz = ()
+(* val find_opt : ('a -> bool) -> 'a list -> 'a option
+find f l returns the first element of the list l that satisfies the predicate f. 
+Returns None if there is no value that satisfies f in the list l. *)
 
-(* let primer_branje_5 = parse_address [("main", Address 42)] "main" *)
+let parse_address (velik_seznam : (string * address) list) niz =
+  match List.find_opt (fun (a,b) -> a=niz) velik_seznam with
+  | None -> Address (int_of_string niz)
+  | Some (a,b) -> b
+
+let primer_branje_5 = parse_address [("main", Address 42)] "main"
 (* val primer_branje_5 : address = Address 42 *)
 
-(* let primer_branje_6 = parse_address [("main", Address 42)] "123" *)
+let primer_branje_6 = parse_address [("main", Address 42)] "123"
 (* val primer_branje_6 : address = Address 123 *)
 
 (*----------------------------------------------------------------------------*
@@ -754,7 +749,11 @@ let parse_address (velik_seznam) niz = ()
  se niz konča z dvopičjem, sicer pa vrne `None`.
 [*----------------------------------------------------------------------------*)
 
-let parse_label _ = ()
+(* val ends_with : suffix:string -> string -> bool
+ends_with ~suffix s is true if and only if s ends with suffix. *)
+
+let parse_label o = 
+  if String.ends_with ~suffix:":" o then Some (String.sub o 0 (String.length o - 1)) else None
 
 let primer_branje_7 = parse_label "main:"
 (* val primer_branje_7 : string option = Some "main" *)
@@ -769,7 +768,20 @@ let primer_branje_8 = parse_label "MOV A, 42"
  pusti nespremenjene.
 [*----------------------------------------------------------------------------*)
 
-let parse_labels _ = ()
+let parse_labels sez =
+  let rec aux sez akumulator i =
+    match sez with
+    | [] -> (akumulator, [])
+    | vrstica :: ostalo ->
+      match (parse_label vrstica) with
+      | Some ukaz ->
+        let (naslovi, ukazi) = aux ostalo ((ukaz, Address i) :: akumulator) i in
+        (naslovi, ukazi)
+      | None ->
+        let (naslovi, ukazi) = aux ostalo akumulator (i + 1) in
+        (naslovi, vrstica :: ukazi)
+  in
+  aux sez [] 0
 
 let primer_branje_9 =
   parse_labels ["JMP main"; "main:"; "MOV A, 0"; "loop:"; "INC A"; "JMP loop"]
@@ -782,7 +794,7 @@ let primer_branje_9 =
  string -> instruction`, ki iz niza prebere ukaz.
 [*----------------------------------------------------------------------------*)
 
-(* let parse_instruction labels line =
+let parse_instruction labels line =
   let tokens =
     line
     |> String.split_on_char ' '
@@ -792,33 +804,33 @@ let primer_branje_9 =
   in
   match tokens with
   | ["MOV"; reg; exp] -> MOV (parse_register reg, parse_expression exp)
-  (* | ["ADD"; reg; exp] -> TODO *)
-  (* | ["SUB"; reg; exp] -> TODO *)
+  | ["ADD"; reg; exp] -> ADD (parse_register reg, parse_expression exp)
+  | ["SUB"; reg; exp] -> SUB (parse_register reg, parse_expression exp)
   | ["INC"; reg] -> INC (parse_register reg)
-  (* | ["DEC"; reg] -> TODO *)
-  (* | ["MUL"; exp] -> TODO *)
-  (* | ["DIV"; exp] -> TODO *)
-  (* | ["AND"; reg; exp] -> TODO *)
-  (* | ["OR"; reg; exp] -> TODO *)
-  (* | ["XOR"; reg; exp] -> TODO *)
-  (* | ["NOT"; reg] -> TODO *)
-  (* | ["CMP"; reg; exp] -> TODO *)
+  | ["DEC"; reg] -> DEC (parse_register reg)
+  | ["MUL"; exp] -> MUL (parse_expression exp)
+  | ["DIV"; exp] -> DIV (parse_expression exp)
+  | ["AND"; reg; exp] -> AND (parse_register reg, parse_expression exp)
+  | ["OR"; reg; exp] -> OR (parse_register reg, parse_expression exp)
+  | ["XOR"; reg; exp] -> XOR (parse_register reg, parse_expression exp)
+  | ["NOT"; reg] -> NOT (parse_register reg)
+  | ["CMP"; reg; exp] -> CMP (parse_register reg, parse_expression exp)
   | ["JMP"; add] -> JMP (parse_address labels add)
-  (* | ["JA"; add] -> TODO *)
-  (* | ["JAE"; add] -> TODO *)
-  (* | ["JB"; add] -> TODO *)
-  (* | ["JBE"; add] -> TODO *)
-  (* | ["JE"; add] -> TODO *)
-  (* | ["JNE"; add] -> TODO *)
-  (* | ["CALL"; add] -> TODO *)
+  | ["JA"; add] -> JA (parse_address labels add)
+  | ["JAE"; add] -> JAE (parse_address labels add)
+  | ["JB"; add] -> JB (parse_address labels add)
+  | ["JBE"; add] -> JBE (parse_address labels add)
+  | ["JE"; add] -> JE (parse_address labels add)
+  | ["JNE"; add] -> JNE (parse_address labels add)
+  | ["CALL"; add] -> CALL (parse_address labels add)
   | ["RET"] -> RET
   | ["PUSH"; exp] -> PUSH (parse_expression exp)
   | ["POP"; reg] -> POP (parse_register reg)
   | ["HLT"] -> HLT
-  | _ -> failwith ("Invalid instruction: " ^ line) *)
+  | _ -> failwith ("Invalid instruction: " ^ line)
 
-(* let primer_branje_10 =
-  List.map (parse_instruction [("main", Address 42)]) ["MOV A, 42"; "CALL main"; "HLT"] *)
+let primer_branje_10 =
+  List.map (parse_instruction [("main", Address 42)]) ["MOV A, 42"; "CALL main"; "HLT"]
 (* val primer_branje_10 : instruction list =
   [MOV (A, Const 42); CALL (Address 42); HLT] *)
 
@@ -829,8 +841,10 @@ let primer_branje_9 =
  funkcija vrne končno stanje.
 [*----------------------------------------------------------------------------*)
 
-let run _ = ()
-
+let run str =
+  let vse = parse_labels(clean_lines (String.split_on_char '\n' str)) in
+  run_program (init (List.map (parse_instruction (fst vse)) (snd vse)))
+  
 let fibonacci = {|
   JMP main
   ; Funkcija, ki izračuna fib(A) in vrednost shrani v register A
@@ -884,10 +898,10 @@ let primer_branje_11 =
 (* val primer_branje_11 : state =
   {instructions =
     [|JMP (Address 20); PUSH (Register C); PUSH (Register B);
-      MOV (C, Register A); CMP (A, Const 0); JE (Address 17);
-      CMP (A, Const 1); JE (Address 17); DEC C; MOV (A, Register C);
-      CALL (Address 1); MOV (B, Register A); DEC C; MOV (A, Register C);
-      CALL (Address 1); ADD (A, Register B); JMP (Address 17); POP B; 
-      POP C; RET; MOV (A, Const 7); CALL (Address 1); HLT|];
+      MOV (C, Register A); CMP (A, Const 0); JE (Address 17); CMP (A, Const 1); 
+      JE (Address 17); DEC C; MOV (A, Register C); CALL (Address 1); 
+      MOV (B, Register A); DEC C; MOV (A, Register C); CALL (Address 1); 
+      ADD (A, Register B); JMP (Address 17); POP B; POP C; RET; 
+      MOV (A, Const 7); CALL (Address 1); HLT|];
    a = 13; b = 0; c = 0; d = 0; ip = Address 22; zero = true; carry = false;
    stack = []} *)
